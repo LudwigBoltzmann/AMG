@@ -146,13 +146,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
-    <ClInclude Include="ConjugateGradient.h" />
+    <ClInclude Include="LinearEqnSolver.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Preconditioner.h" />
     <ClInclude Include="MatrixOperation.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LinearEqnSolver.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Preconditioner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

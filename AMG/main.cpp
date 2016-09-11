@@ -1,5 +1,5 @@
 #include "Common.h"
-#include "ConjugateGradient.h"
+#include "LinearEqnSolver.h"
 #include "Matrix.h"
 
 int main(int argc, char* argv[])

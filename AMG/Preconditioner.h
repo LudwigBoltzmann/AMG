@@ -11,8 +11,10 @@ namespace AlgebraicMultigrid
     protected:
 
     public:
-        Preconditioner();
+        Preconditioner(BSR* A);
 
+        void inverse();
+        void solve(reaVec& x, reaVec& y);
     };
 
 

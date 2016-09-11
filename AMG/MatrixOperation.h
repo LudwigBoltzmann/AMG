@@ -5,7 +5,7 @@
 
 namespace AlgebraicMultigrid
 {
-    void spmv(integer dim, intVec& ptr, intVec& ind, reaVec& val, reaVec& x, reaVec& res)
+    inline void spmv(integer dim, intVec& ptr, intVec& ind, reaVec& val, reaVec& x, reaVec& res)
     {
 #pragma omp parallel for
         for (integer i = 0; i < dim; i++) {
@@ -19,7 +19,7 @@ namespace AlgebraicMultigrid
         }
     }
 
-    void spmv(integer dim, real alpha, intVec& ptr, intVec& ind, reaVec& val, reaVec& x, real beta, reaVec& res)
+    inline void spmv(integer dim, real alpha, intVec& ptr, intVec& ind, reaVec& val, reaVec& x, real beta, reaVec& res)
     {
 #pragma omp parallel for
         for (integer i = 0; i < dim; i++) {
@@ -33,7 +33,7 @@ namespace AlgebraicMultigrid
         }
     }
 
-    void residual(integer dim, intVec& ptr, intVec& ind, reaVec& val, reaVec& x, reaVec& b, reaVec& res)
+    inline void residual(integer dim, intVec& ptr, intVec& ind, reaVec& val, reaVec& x, reaVec& b, reaVec& res)
     {
 #pragma omp parallel for
         for (integer i = 0; i < dim; i++) {
@@ -45,6 +45,35 @@ namespace AlgebraicMultigrid
             }
             res[i] = b[i] - sum;
         }
+    }
+
+    inline real norm(reaVec& x)
+    {
+        double sum = 0.0;
+        for (auto it = x.begin(); it != x.end(); it++) {
+            sum += *it * *it;
+        }
+        return sqrt(sum);
+    }
+
+    inline real innerProduct(reaVec& x, reaVec& y)
+    {
+        integer dim = x.size();
+        real sum = 0.0;
+#pragma omp parallel
+        {
+            real partial_sum = 0.0;
+#pragma omp for
+            for (int i = 0; i < dim; i++) {
+                partial_sum += x[i] * y[i];
+            }
+#pragma omp atomic 
+            sum += partial_sum;
+#pragma omp barrier
+        }
+        return sum;
+        
+
     }
 
 }

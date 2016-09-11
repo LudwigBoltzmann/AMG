@@ -19,57 +19,51 @@ namespace AlgebraicMultigrid
     typedef std::vector<real>           reaVec;
     typedef std::pair<integer, real>    pair_i_r;
 
-    int poisson(
-        int n,
-        std::vector<int>    &ptr,
-        std::vector<int>    &col,
-        std::vector<double> &val,
-        std::vector<double> &rhs
+    inline integer poisson(
+        integer n,
+        intVec    &ptr, intVec &ind, reaVec    &val, reaVec    &rhs
         )
     {
-        int    n2 = n * n;        // Number of points in the grid.
-        double h = 1.0 / (n - 1); // Grid spacing.
+        integer    vecleng = n * n;
+        real       h = 1.0 / (n - 1);
 
-        ptr.clear(); ptr.reserve(n2 + 1); ptr.push_back(0);
-        col.clear(); col.reserve(n2 * 5); // We use 5-point stencil, so the matrix
-        val.clear(); val.reserve(n2 * 5); // will have at most n2 * 5 nonzero elements.
+        ptr.clear(); ptr.reserve(vecleng + 1); ptr.push_back(0);
+        ind.clear(); ind.reserve(vecleng * 5); 
+        val.clear(); val.reserve(vecleng * 5);
 
-        rhs.resize(n2);
+        rhs.resize(vecleng);
 
-        for (int j = 0, k = 0; j < n; ++j) {
-            for (int i = 0; i < n; ++i, ++k) {
+        for (integer j = 0, k = 0; j < n; ++j) {
+            for (integer i = 0; i < n; ++i, ++k) {
                 if (i == 0 || i == n - 1 || j == 0 || j == n - 1) {
-                    // Boundary point. Use Dirichlet condition.
-                    col.push_back(k);
+                    ind.push_back(k);
                     val.push_back(1.0);
 
                     rhs[k] = 0.0;
                 }
                 else {
-                    // Interior point. Use 5-point finite difference stencil.
-                    col.push_back(k - n);
+                    ind.push_back(k - n);
                     val.push_back(-1.0 / (h * h));
 
-                    col.push_back(k - 1);
+                    ind.push_back(k - 1);
                     val.push_back(-1.0 / (h * h));
 
-                    col.push_back(k);
+                    ind.push_back(k);
                     val.push_back(4.0 / (h * h));
 
-                    col.push_back(k + 1);
+                    ind.push_back(k + 1);
                     val.push_back(-1.0 / (h * h));
 
-                    col.push_back(k + n);
+                    ind.push_back(k + n);
                     val.push_back(-1.0 / (h * h));
 
                     rhs[k] = 1.0;
                 }
 
-                ptr.push_back(col.size());
+                ptr.push_back(ind.size());
             }
         }
-
-        return n2;
+        return vecleng;
     }
 }
 
